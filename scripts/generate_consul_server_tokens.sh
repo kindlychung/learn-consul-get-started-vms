@@ -42,18 +42,18 @@ node_prefix "consul" {
 }
 EOF
 
-consul acl policy create -name 'acl-policy-dns' -description 'Policy for DNS endpoints' -rules @${ASSETS}acl-policy-dns.hcl  > /dev/null 2>&1
+consul acl policy create -name 'acl-policy-dns' -description 'Policy for DNS endpoints' -rules @${ASSETS}acl-policy-dns.hcl  
 
-consul acl policy create -name 'acl-policy-server-node' -description 'Policy for Server nodes' -rules @${ASSETS}acl-policy-server-node.hcl  > /dev/null 2>&1
+consul acl policy create -name 'acl-policy-server-node' -description 'Policy for Server nodes' -rules @${ASSETS}acl-policy-server-node.hcl  
 
-consul acl token create -description 'DNS - Default token' -policy-name acl-policy-dns --format json > ${ASSETS}acl-token-dns.json 2> /dev/null
+consul acl token create -description 'DNS - Default token' -policy-name acl-policy-dns --format json > ${ASSETS}acl-token-dns.json 
 
 DNS_TOK=`cat ${ASSETS}acl-token-dns.json | jq -r ".SecretID"` 
 
 ## Create one agent token per server
 echo "Setup ACL tokens for Server"
 
-consul acl token create -description "server agent token" -policy-name acl-policy-server-node  --format json > ${ASSETS}server-acl-token.json 2> /dev/null
+consul acl token create -description "server agent token" -policy-name acl-policy-server-node  --format json > ${ASSETS}server-acl-token.json 
 
 SERV_TOK=`cat ${ASSETS}server-acl-token.json | jq -r ".SecretID"`
 
