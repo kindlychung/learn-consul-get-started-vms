@@ -48,7 +48,7 @@ addresses {
 }
 
 ports {
-  grpc  = 8502
+  grpc_tls  = 8502
   http  = 8500
   https = ${HTTPS_PORT}
   dns   = ${DNS_PORT}
