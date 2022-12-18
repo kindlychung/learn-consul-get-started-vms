@@ -11,7 +11,7 @@ export DOMAIN=${DOMAIN:-"consul"}
 export CONSUL_DATA_DIR=${CONSUL_DATA_DIR:-"/etc/consul/data"}
 export CONSUL_CONFIG_DIR=${CONSUL_CONFIG_DIR:-"/etc/consul/config"}
 
-export CONSUL_HTTP_ADDR="https://consul${FQDN_SUFFIX}:8443"
+export CONSUL_HTTP_ADDR="https://localhost:8443"
 export CONSUL_HTTP_SSL=true
 export CONSUL_CACERT="${CONSUL_CONFIG_DIR}/consul-agent-ca.pem"
 export CONSUL_TLS_SERVER_NAME="server.${DATACENTER}.${DOMAIN}"
