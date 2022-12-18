@@ -28,38 +28,30 @@ cd ${CONSUL_CONFIG_DIR}
 echo "Generate agent configuration - agent-server-secure.hcl"
 tee ${CONSUL_CONFIG_DIR}/agent-server-secure.hcl > /dev/null << EOF
 # agent-server-secure.hcl
-
 # Data Persistence
 data_dir = "${CONSUL_DATA_DIR}"
-
 # Logging
 log_level = "DEBUG"
-
 # Enable service mesh
 connect {
   enabled = true
 }
-
 # Addresses and ports
 addresses {
   grpc = "127.0.0.1"
   https = "0.0.0.0"
   dns = "0.0.0.0"
 }
-
 ports {
   grpc_tls  = 8502
   http  = 8500
   https = ${HTTPS_PORT}
   dns   = ${DNS_PORT}
 }
-
 # DNS recursors
 recursors = ["${DNS_RECURSOR}"]
-
 # Disable script checks
 enable_script_checks = false
-
 # Enable local script checks
 enable_local_script_checks = true
 EOF
@@ -70,9 +62,7 @@ tee ${CONSUL_CONFIG_DIR}/agent-server-specific.hcl > /dev/null << EOF
 server = true
 bootstrap_expect = 1
 datacenter = "${DATACENTER}"
-
 client_addr = "127.0.0.1"
-
 ## UI configuration (1.9+)
 ui_config {
   enabled = true
@@ -90,36 +80,33 @@ consul tls cert create -server -domain ${DOMAIN} -dc=${DATACENTER}
 
 echo "Generate TLS configuration - agent-server-tls.hcl"
 tee ${CONSUL_CONFIG_DIR}/agent-server-tls.hcl > /dev/null << EOF
-## TLS Encryption (requires cert files to be present on the server nodes)
-# tls {
-#   defaults {
-#     ca_file   = "${CONSUL_CONFIG_DIR}/consul-agent-ca.pem"
-#     cert_file = "${CONSUL_CONFIG_DIR}/${DATACENTER}-server-${DOMAIN}-0.pem"
-#     key_file  = "${CONSUL_CONFIG_DIR}/${DATACENTER}-server-${DOMAIN}-0-key.pem"
-
-#     verify_outgoing        = true
-#     verify_incoming        = true
-#   }
-#   https {
-#     verify_incoming        = false
-#   }
-#   internal_rpc {
-#     verify_server_hostname = true
-#   }
-# }
-
-## TLS Encryption (requires cert files to be present on the server nodes)
-ca_file   = "/etc/consul/config/consul-agent-ca.pem"
-cert_file = "${CONSUL_CONFIG_DIR}/${DATACENTER}-server-${DOMAIN}-0.pem"
-key_file  = "${CONSUL_CONFIG_DIR}/${DATACENTER}-server-${DOMAIN}-0-key.pem"
-verify_incoming        = false
-verify_incoming_rpc    = true
-verify_outgoing        = true
-verify_server_hostname = true
-
-auto_encrypt {
-  allow_tls = true
+# TLS Encryption (requires cert files to be present on the server nodes)
+tls {
+  defaults {
+    ca_file   = "${CONSUL_CONFIG_DIR}/consul-agent-ca.pem"
+    cert_file = "${CONSUL_CONFIG_DIR}/${DATACENTER}-server-${DOMAIN}-0.pem"
+    key_file  = "${CONSUL_CONFIG_DIR}/${DATACENTER}-server-${DOMAIN}-0-key.pem"
+    verify_outgoing        = true
+    verify_incoming        = true
+  }
+  https {
+    verify_incoming        = false
+  }
+  internal_rpc {
+    verify_server_hostname = true
+  }
 }
+### TLS Encryption (requires cert files to be present on the server nodes)
+#ca_file   = "/etc/consul/config/consul-agent-ca.pem"
+#cert_file = "${CONSUL_CONFIG_DIR}/${DATACENTER}-server-${DOMAIN}-0.pem"
+#key_file  = "${CONSUL_CONFIG_DIR}/${DATACENTER}-server-${DOMAIN}-0-key.pem"
+#verify_incoming        = false
+#verify_incoming_rpc    = true
+#verify_outgoing        = true
+#verify_server_hostname = true
+#auto_encrypt {
+#  allow_tls = true
+#}
 EOF
 
 echo "Generate ACL configuration - agent-server-acl.hcl"
